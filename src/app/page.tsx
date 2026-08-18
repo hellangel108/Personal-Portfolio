@@ -26,7 +26,7 @@ import Impact from './components/Impact';
 import Skills from './components/Skills';
 import Contact from './components/Contact';
 
-export default function App() {
+export default function Page() {
   const [activeSection, setActiveSection] = useState('hero');
 
   return (

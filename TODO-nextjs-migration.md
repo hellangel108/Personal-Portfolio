@@ -56,18 +56,34 @@ Framer Motion (`motion/react`). Single-page app — no real routing today despit
 
 ## 3. Restructure files into Next.js conventions
 
-- [ ] Decide: keep `src/app/...` as-is (Next supports a `src/` root) or flatten
-      to `app/` at project root — either works, just be consistent.
-- [ ] `src/main.tsx` → delete; Next.js doesn't use a manual `createRoot` entry.
-- [ ] `src/app/App.tsx` → becomes `app/page.tsx` (the nav + section composition
-      currently in `App.tsx` becomes the page body; consider moving the `<nav>`
-      into `app/layout.tsx` if it should persist across future routes).
-- [ ] `src/app/components/*.tsx` → move to `app/components/` or keep under
-      `src/components/` per your choice in the step above; import paths will
-      need updating either way.
-- [ ] `src/styles/*.css` → move to `app/globals.css` (merge `fonts.css`,
-      `tailwind.css`, `theme.css` imports, or keep as separate files imported
-      from `globals.css` as they are now).
+- [x] Kept `src/app/...` as the App Router root (matches the `--src-dir`
+      scaffold choice from §1) — no flattening, minimal disruption.
+- [x] Deleted `src/main.tsx`.
+- [x] `src/app/App.tsx` → renamed to `src/app/page.tsx` (default export
+      renamed `App` → `Page`); nav + all sections + footer kept together in
+      the page body as one unit rather than splitting nav into layout, since
+      §0 already ruled out multi-route navigation.
+- [x] `src/app/components/*` — left in place; Next only treats specific
+      reserved filenames (`page.tsx`, `layout.tsx`, etc.) specially, so
+      arbitrary co-located folders like `components/` are untouched by the
+      router. No import paths changed.
+- [x] Added the required `src/app/layout.tsx` root layout (html/body wrapper +
+      placeholder `metadata.title`; full metadata/favicon still pending §5).
+- [x] Moved `fonts.css`/`tailwind.css`/`theme.css` to `src/app/styles/`, added
+      `src/app/globals.css` importing all three (same relative `@source`
+      path in `tailwind.css` still resolves correctly to `src/app/**`).
+      Also removed `src/styles/globals.css` and `src/styles/index.css` —
+      empty/stray files from before this migration.
+- [x] Smoke-tested with `next dev` — Turbopack auto-generated `tsconfig.json`
+      and `next-env.d.ts` on first run (also generated `AGENTS.md`/`CLAUDE.md`;
+      removed both as incidental noise, not part of this migration). Hitting
+      `/` gives a 500, but **only** for the two reasons already scoped to
+      later sections: (1) every interactive component needs `'use client'`
+      (§4), and (2) Tailwind v4 at-rules (`@import 'tailwindcss'`, `@theme`,
+      `@apply`, `@source`, `@custom-variant`) aren't recognized because
+      `postcss.config.mjs` has no plugins wired up yet (§6, needs
+      `@tailwindcss/postcss`). No other/unexpected errors surfaced —
+      confirms the file restructuring itself is sound.
 
 ## 4. Client components
 
@@ -152,6 +168,14 @@ interactive (state, animation, Radix primitives), so:
 
 - [ ] Update `README.md` tech stack table and getting-started commands
       (`npm run dev` → Next.js dev server, mention port 3000 instead of 5173).
-- [ ] Update `.gitignore` for Next.js output (`.next/`, `next-env.d.ts`) in
-      place of/alongside the current Vite entries (`dist/`, `dist-ssr/`).
+- [x] Updated `.gitignore` for Next.js output — added `.next/`, `/out/`,
+      `.vercel`, `next-env.d.ts`; dropped the dead `vite.config.ts.timestamp-*`
+      entry (`vite.config.ts` itself is already gone per §2). Pulled forward
+      from end-of-migration cleanup once `.next/` showed up as ~150 untracked
+      files after the first `next dev` run — not worth leaving stray that long.
+- [x] Added a minimal `next.config.ts` with `agentRules: false`. Next.js 16
+      auto-generates `AGENTS.md`/`CLAUDE.md` on every `next dev`/`next build`
+      unless disabled; without this they'd keep reappearing after every
+      deletion. A fuller `next.config.ts` (if anything else is needed) still
+      belongs to §7.
 - [ ] Remove this file once the migration is complete.
