@@ -91,15 +91,31 @@ Next.js Server Components are the default — everything under `app/` is a
 Server Component unless marked otherwise. This app is almost entirely
 interactive (state, animation, Radix primitives), so:
 
-- [ ] Add `'use client'` to the top of `App.tsx`/`page.tsx` (uses `useState`)
-      and every component that uses hooks, `motion/react`, or Radix UI:
-      `Hero`, `About`, `Contact`, `Experience`, `Impact`, `Projects`, `Skills`,
-      and everything under `components/ui/*` (accordion, dialog, dropdown-menu,
-      sheet, sidebar, tabs, tooltip, etc. — all Radix-based).
-- [ ] Audit whether any purely presentational component (no hooks/handlers)
-      can stay a Server Component to reduce client bundle size — likely few,
-      given the animation-heavy design, but worth a pass after the initial
-      port compiles.
+- [x] Found **36 of 57** `components/ui/*` files already had a pre-existing
+      `'use client'` directive — leftover from this shadcn/ui set's original
+      Next.js template origin, inert under Vite but never stripped.
+- [x] Added `'use client'` to the 14 files that actually needed it and didn't
+      already have it: `page.tsx`; all 7 sections (`Hero`, `About`, `Contact`,
+      `Experience`, `Impact`, `Projects`, `Skills` — all use `useRef`/`useState`
+      + `motion/react`); `figma/ImageWithFallback.tsx` (`useState`); and 4 more
+      `ui/*` files the pre-existing set had missed: `badge.tsx`, `button.tsx`,
+      `breadcrumb.tsx` (all three use Radix `Slot`), `navigation-menu.tsx`
+      (full Radix primitive), and the `useIsMobile` hook in `use-mobile.ts`.
+- [x] Audited the purely presentational stragglers instead of blanket-applying
+      the directive: `alert.tsx`, `card.tsx`, `input.tsx`, `textarea.tsx`,
+      `skeleton.tsx`, `pagination.tsx`, and `utils.ts` use no hooks, no Radix,
+      and no `motion` — left as Server Components (or plain modules, for
+      `utils.ts`). `pagination.tsx` only imports `buttonVariants` (a plain
+      class-name function) from `button.tsx`, not the Radix-backed `Button`
+      component itself, so it doesn't inherit the client requirement.
+- [x] Verified with `next dev`: the `'use client'`-related errors are fully
+      gone. Only the Tailwind PostCSS errors remain (§6, unaffected by this
+      section's changes).
+- [x] Discovered Next.js 16's dev server runs as a **persistent daemon**
+      that survives the wrapping shell process being stopped — `TaskStop`
+      on the `npm run dev` task did not free port 3000 either time; had to
+      `taskkill` the actual PID directly. Worth remembering for the rest of
+      this migration's verification steps.
 
 ## 5. Metadata / `<head>` content
 
