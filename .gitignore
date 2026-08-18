@@ -8,8 +8,8 @@ dist/
 dist-ssr/
 build/
 
-# Lock files (keep only one — using pnpm)
-package-lock.json
+# Lock files (keep only one — using npm)
+pnpm-lock.yaml
 yarn.lock
 
 # Environment variables

@@ -23,19 +23,19 @@ A modern, animated personal portfolio website for a Senior Engineering Leader â€
 | Animation | Framer Motion (motion/react) |
 | Icons | Lucide React |
 | Routing | React Router v7 |
-| Package manager | pnpm |
+| Package manager | npm |
 
 ## Getting Started
 
 ```bash
 # Install dependencies
-pnpm install
+npm install
 
 # Start dev server
-pnpm dev
+npm run dev
 
 # Build for production
-pnpm build
+npm run build
 ```
 
 Dev server runs at `http://localhost:5173`
