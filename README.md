@@ -1,6 +1,6 @@
 # Personal Portfolio Website
 
-A modern, animated personal portfolio website for a Senior Engineering Leader — built with React, TypeScript, Vite, and Tailwind CSS.
+A modern, animated personal portfolio website for a Senior Engineering Leader — built with Next.js, TypeScript, and Tailwind CSS.
 
 ## Sections
 
@@ -16,13 +16,11 @@ A modern, animated personal portfolio website for a Senior Engineering Leader �
 
 | Category | Technologies |
 |---|---|
-| Framework | React 18, TypeScript |
-| Build tool | Vite 6 |
+| Framework | Next.js 16 (App Router), React 19, TypeScript |
 | Styling | Tailwind CSS v4 |
-| UI Components | shadcn/ui (Radix UI), Material UI |
+| UI Components | shadcn/ui (Radix UI) |
 | Animation | Framer Motion (motion/react) |
 | Icons | Lucide React |
-| Routing | React Router v7 |
 | Package manager | npm |
 
 ## Getting Started
@@ -36,6 +34,9 @@ npm run dev
 
 # Build for production
 npm run build
+
+# Run the production build
+npm run start
 ```
 
-Dev server runs at `http://localhost:5173`
+Dev server runs at `http://localhost:3000`
