@@ -188,18 +188,46 @@ interactive (state, animation, Radix primitives), so:
 
 ## 8. Routing
 
-- [ ] `react-router` (v7) is a dependency but appears unused in `src/` — if
-      no routing is actually needed, drop it entirely rather than porting it.
-- [ ] If real routes are wanted later (e.g. `/projects/[slug]`), that's a
-      separate follow-up using Next's file-based `app/` routing, not part of
-      this migration.
+- [x] `react-router` was already dropped in §1 (it was one of the unused
+      dependencies identified in the §0 audit). Re-confirmed here: absent
+      from `package.json`, `package-lock.json`, `node_modules`, and every
+      `src/` import — genuinely nothing left to do for this bullet.
+- [x] No real routes added — §0 already decided this stays a single-page
+      site. Multi-route support (e.g. `/projects/[slug]`) remains a future
+      follow-up via Next's file-based `app/` routing, not part of this
+      migration, exactly as originally scoped.
 
 ## 9. Images
 
-- [ ] `ImageWithFallback` (`src/app/components/figma/ImageWithFallback.tsx`)
-      uses a plain `<img>` — works as-is under Next.js, but consider whether
-      to migrate to `next/image` for automatic optimization once real image
-      assets exist.
+- [x] Confirmed `ImageWithFallback` isn't imported/used anywhere yet, and
+      the project has zero real image assets (no `public/`, nothing under
+      `src/`). Left it as a plain `<img>` — converting to `next/image` now
+      would mean inventing `width`/`height`/`src` values with nothing real
+      to attach them to. Deferring until real images and an actual usage
+      exist, exactly as the todo's own conditional wording already implied.
+- [x] While verifying this, discovered the `lint` script was actually
+      **broken**: `next lint` was removed as a CLI command in Next.js 16
+      (confirmed via `next --help` — not in the command list), and no
+      `eslint.config.mjs` existed yet either (only the devDependencies were
+      added, back in §1). Fixed both: added `eslint.config.mjs` (matching
+      the reference scaffold's flat-config shape from §1) and changed the
+      script to `eslint .`.
+- [x] Running the now-working lint confirmed the actual Section 9 question:
+      `@next/next/no-img-element` fires as a **warning** (not error) on
+      `ImageWithFallback.tsx`'s two `<img>` tags — validates leaving it as-is
+      for now.
+- [x] That same lint run also surfaced **8 real errors** unrelated to this
+      migration — pre-existing code quality issues in the original
+      Figma-exported source that were simply never checked before (Vite had
+      no ESLint wired up at all). `react-hooks/purity`: `sidebar.tsx:611`
+      calls `Math.random()` during render. `react-hooks/set-state-in-effect`:
+      `sidebar.tsx` and `use-mobile.ts:18` call `setState` synchronously
+      inside an effect. Plus 19 warnings, mostly unused icon imports in
+      `page.tsx`. Confirmed these do **not** block `next build` (Next 16
+      doesn't run ESLint during build by default) — flagging as a
+      **separate, out-of-scope follow-up**, not fixing here: this is
+      pre-existing code quality cleanup, not part of the Vite→Next.js
+      migration itself.
 
 ## 10. Verify
 
